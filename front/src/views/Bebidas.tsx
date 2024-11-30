@@ -9,7 +9,6 @@ const Bebidas: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const drinksPerPage = 15;
 
-  // Obtener datos de las bebidas
   useEffect(() => {
     const fetchDrinks = async () => {
       try {
@@ -19,7 +18,7 @@ const Bebidas: React.FC = () => {
 
         if (Array.isArray(data)) {
           setDrinks(data);
-          setFilteredDrinks(data); // Inicializar bebidas filtradas
+          setFilteredDrinks(data); 
         } else {
           throw new Error('Unexpected API response format');
         }
@@ -32,27 +31,44 @@ const Bebidas: React.FC = () => {
     fetchDrinks();
   }, []);
 
-  // Actualizar bebidas filtradas al cambiar el término de búsqueda
   useEffect(() => {
     if (searchTerm.trim() === '') {
-      // Restablecer a la lista completa si el término de búsqueda está vacío
       setFilteredDrinks(drinks);
-      setCurrentPage(1); // Resetear a la primera página
+      setCurrentPage(1); 
     } else {
-      // Filtrar bebidas por nombre
       const filtered = drinks.filter((drink) =>
         drink.strDrink.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredDrinks(filtered);
-      setCurrentPage(1); // Resetear a la primera página al buscar
+      setCurrentPage(1); 
     }
   }, [searchTerm, drinks]);
 
   const clearSearch = () => {
-    setSearchTerm(''); // Limpiar el término de búsqueda
+    setSearchTerm(''); 
   };
 
   const closeModal = () => setSelectedDrink(null);
+
+  const deleteDrink = async (_id: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/cocktails/${_id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete drink');
+      }
+
+      // Actualiza el estado de drinks y filteredDrinks solo eliminando el cóctel específico
+      setDrinks((prevDrinks) => prevDrinks.filter((drink) => drink._id !== _id));
+      setFilteredDrinks((prevDrinks) => prevDrinks.filter((drink) => drink._id !== _id));
+      setSelectedDrink(null); // Cerrar el modal después de eliminar
+    } catch (error) {
+      console.error('Error deleting drink:', error);
+      setError('Failed to delete the drink.');
+    }
+  };
 
   const indexOfLastDrink = currentPage * drinksPerPage;
   const indexOfFirstDrink = indexOfLastDrink - drinksPerPage;
@@ -104,7 +120,7 @@ const Bebidas: React.FC = () => {
             <div className="grid grid-cols-5 gap-4">
               {currentDrinks.map((drink) => (
                 <div
-                  key={drink.idDrink}
+                  key={drink._id} // Usar _id en lugar de idDrink
                   className="card bg-white text-black shadow-md rounded-lg overflow-hidden relative cursor-pointer"
                   onClick={() => setSelectedDrink(drink)}
                 >
@@ -178,6 +194,14 @@ const Bebidas: React.FC = () => {
                       <li key={index}>{ingredient}</li>
                     ))}
                 </ul>
+
+                {/* Botón de eliminación */}
+                <button
+                  onClick={() => deleteDrink(selectedDrink._id)} // Usar _id en lugar de idDrink
+                  className="mt-6 px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </div>
