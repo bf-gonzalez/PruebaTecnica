@@ -2,15 +2,15 @@ import mongoose, {Schema, Document, Model } from "mongoose";
 
 export interface IDrink extends Document {
 
-  idDrink: string;
+  idDrink?: string;
   strDrink: string;
   strDrinkAlternate?: string | null;
   strTags?: string | null;
   strVideo?: string | null;
   strCategory: string;
   strIBA?: string | null;
-  strAlcoholic: string;
-  strGlass: string;
+  strAlcoholic?: string;
+  strGlass?: string;
   strInstructions: string;
   strInstructionsES?: string | null;
   strInstructionsDE?: string | null;
@@ -51,22 +51,22 @@ export interface IDrink extends Document {
   strMeasure15?: string | null;
   strImageSource?: string | null;
   strImageAttribution?: string | null;
-  strCreativeCommonsConfirmed: string;
-  dateModified: Date;
+  strCreativeCommonsConfirmed?: string;
+  dateModified?: Date;
   
 }
 
 const drinkSchema: Schema<IDrink> = new Schema({
 
-  idDrink: { type: String, required: true },
+  idDrink: { type: String, default: null },
   strDrink: { type: String, required: true },
   strDrinkAlternate: { type: String, default: null },
   strTags: { type: String, default: null },
   strVideo: { type: String, default: null },
   strCategory: { type: String, required: true },
   strIBA: { type: String, default: null },
-  strAlcoholic: { type: String, required: true },
-  strGlass: { type: String, required: true },
+  strAlcoholic: { type: String, default: null },
+  strGlass: { type: String, default: null},
   strInstructions: { type: String, required: true },
   strInstructionsES: { type: String, default: null },
   strInstructionsDE: { type: String, default: null },
@@ -107,7 +107,7 @@ const drinkSchema: Schema<IDrink> = new Schema({
   strMeasure15: { type: String, default: null },
   strImageSource: { type: String, default: null },
   strImageAttribution: { type: String, default: null },
-  strCreativeCommonsConfirmed: { type: String, required: true },
+  strCreativeCommonsConfirmed: { type: String, default: null },
   dateModified: { type: Date, default: Date.now },
 });
 
